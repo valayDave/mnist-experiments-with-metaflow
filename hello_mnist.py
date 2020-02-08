@@ -103,14 +103,40 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         self.train_flattened,self.val_flattened,self.test_flattened = read_mnist(np,self.mnist_dataset_train_x_raw,self.mnist_dataset_train_y_raw,self.mnist_dataset_test_x_raw,self.mnist_dataset_test_y_raw,flatten=True,num_train=self.num_training_examples)
         
         # $ Train models in parallel withe the 
-        self.next(self.train_convolution)
+        self.next(self.train_sequential,self.train_convolution,self.train_convolution_batch_norm)
 
     @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
     @step
-    def train_convolution(self):
+    def train_sequential(self):
+        """
+        Train sequential Neural Network with with the Set of parameters. 
+        
+        """
         from tensorflow.python.keras.layers import Conv2D,Input,MaxPool2D,Dense,Flatten,MaxPooling2D
         from tensorflow.python.keras.models import Sequential
         train, val, test = self.train_flattened,self.val_flattened,self.test_flattened
+        train_X,train_Y = train
+        test_X,test_Y = test
+        model = Sequential()
+        model.add(Dense(128, activation='relu',input_shape=[784]))  # fully-connected layer with 128 units and ReLU activation
+        model.add(Dense(128, activation='relu'))
+        model.add(Dense(10, activation='softmax'))  # output layer with 10 units and a softmax activation
+
+        model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['categorical_accuracy','accuracy'])
+        history = model.fit(train_X,train_Y, validation_split=0.2, epochs=self.number_of_epochs, batch_size=self.batch_size)
+        self.history = history.history
+        self.next(self.join)
+
+        
+    @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
+    @step
+    def train_convolution(self):
+        """
+        Train a Convolutional Neural Network with the Set of parameters.
+        """
+        from tensorflow.python.keras.layers import Conv2D,Input,MaxPool2D,Dense,Flatten,MaxPooling2D
+        from tensorflow.python.keras.models import Sequential
+        train, val, test = self.train_unflattened,self.val_unflattened,self.test_unflattened
         train_X,train_Y = train
         test_X,test_Y = test
         train_X = train_X.reshape(self.num_training_examples,28,28,1)
@@ -130,17 +156,62 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         self.history = history.history
         self.next(self.join)
 
-    # @step
-    # def train_sequential(self):
-    #     pass
-
-    
+    @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
     @step
-    def join(self):
+    def train_convolution_batch_norm(self):
+        """
+        Train a Convolutional Neural Network with Batch Norm and Dropout with the Set of parameters.
+        """
+        from tensorflow.python.keras.layers import Conv2D,Input,MaxPool2D,Dense,Flatten,MaxPooling2D,BatchNormalization,Activation,Dropout
+        from tensorflow.python.keras.models import Sequential
+        train, val, test = self.train_unflattened,self.val_unflattened,self.test_unflattened
+        train_X,train_Y = train
+        test_X,test_Y = test
+        train_X = train_X.reshape(self.num_training_examples,28,28,1)
+        test_X = test_X.reshape(test_X.shape[0],28,28,1)
+        model = Sequential()
+        
+        model.add(Conv2D(32,kernel_size=(1,1),use_bias=False,input_shape=(28,28,1)))
+        model.add(BatchNormalization(axis=3))
+        model.add(Activation('relu'))
+        model.add(Conv2D(64,kernel_size=(3,3),use_bias=False))
+        model.add(BatchNormalization(axis=3))
+        model.add(Activation('relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        
+        model.add(Conv2D(32,kernel_size=(1,1),use_bias=False))
+        model.add(BatchNormalization(axis=3))
+        model.add(Activation('relu'))
+        model.add(Conv2D(64,kernel_size=(3,3),use_bias=False))
+        model.add(BatchNormalization(axis=3))
+        model.add(Activation('relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+        model.add(Dropout(0.2))
+        model.add(Flatten())
+        model.add(Dense(128, activation='relu'))  
+        model.add(Dropout(0.4))
+        model.add(Dense(10, activation='softmax'))
+    
+        model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['categorical_accuracy','accuracy'])
+        history = model.fit(train_X,train_Y, validation_split=0.2, epochs=self.number_of_epochs, batch_size=self.batch_size)
+        self.history = history.history
+        self.next(self.join)
+
+ 
+    @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
+    @step
+    def join(self,inputs):
         """
         Join our parallel branches and merge results,
 
         """
+        self.history = {
+            'convolution' : inputs.train_convolution.history,
+            'sequential' : inputs.train_sequential.history,
+            'convolution_batch_norm' : inputs.train_convolution_batch_norm.history
+        }
+        
         self.next(self.end)
 
     @step
@@ -149,7 +220,6 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         This step simply prints out the playlist.
 
         """
-        # Print the playlist.
         print("Done Computation")
 
 
