@@ -217,7 +217,7 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
     @step
     def end(self):
         """
-        This step simply prints out the playlist.
+        This is the end step of the Computation 
 
         """
         print("Done Computation")
