@@ -12,14 +12,6 @@
 
 ## Experimentation Strategy :
 
-- num_training_examples : 
-    - 10000
-    - 20000
-    - 30000
-    - 40000
-    - 50000
-    - 60000
-
 - Run individual Experiments Using ``python Experiments-with-MNIST/hello_mnist.py --environment=conda run --num_training_examples 10000``
 
 ## Metaflow Help 
