@@ -2,3 +2,4 @@ OriginalCode/
 data/
 .env/
 .metaflow/
+*.pyc

@@ -1,5 +1,15 @@
 # Experiments With MNIST Using Metaflow
 
+## Setting it Up 
+
+- ``pip install -r requirements.txt``
+- Conda is required to Run this. 
+    1. Download Miniconda at https://docs.conda.io/en/latest/miniconda.html
+    2. ```conda config --add channels conda-forge```
+
+- export PATH="/Users/valaydave/miniconda3/bin:$PATH" --> Change this to where u install miniconda. U need to run this before executing the Experiments. 
+
+
 ## Experimentation Strategy :
 
 - num_training_examples : 
@@ -25,11 +35,3 @@
 ## Some Ideas 
 
 - Time Measurement decorator to measure start and endtime of the Steps
-
-## Running with conda 
-
-- Conda is required to Run this. 
-    1. Download Miniconda at https://docs.conda.io/en/latest/miniconda.html
-    2. ```conda config --add channels conda-forge```
-
-- export PATH="/Users/valaydave/miniconda3/bin:$PATH" --> Change this to where u install miniconda. U need to run this before executing the Experiments. 
