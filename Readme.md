@@ -1,6 +1,6 @@
 # Experiments With MNIST Using Metaflow
 
-Used Metaflow to run experiments for classification of digits on a MNIST dataset
+Used Metaflow to test and experiment with different deep learning models for classification of digits on a MNIST dataset
 
 ## Setting it Up 
 
