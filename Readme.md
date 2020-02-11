@@ -14,13 +14,13 @@ Used Metaflow to test and experiment with different deep learning models for cla
 
 ## Experimentation Strategy :
 
-- Run individual Experiments Using ``python Experiments-with-MNIST/hello_mnist.py --environment=conda run --num_training_examples 10000``
+- Run individual Experiments Using ``python hello_mnist.py --environment=conda run --num_training_examples 10000``
 
 ## Metaflow Help 
 
--  ``python Experiments-with-MNIST/hello_mnist.py --environment=conda run --help`` : This will show all the parameters which are currently avaliable to perform experiments on. 
+-  ``python hello_mnist.py --environment=conda run --help`` : This will show all the parameters which are currently avaliable to perform experiments on. 
 
--  ``python Experiments-with-MNIST/hello_mnist.py --environment=conda show`` : This will show the steps of the DAG used for this Experiment. 
+-  ``python hello_mnist.py --environment=conda show`` : This will show the steps of the DAG used for this Experiment. 
 
 ## Experiment Analysis
 
