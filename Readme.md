@@ -1,5 +1,7 @@
 # Experiments With MNIST Using Metaflow
 
+Used Metaflow to run experiments for classification of digits on a MNIST dataset
+
 ## Setting it Up 
 
 - ``pip install -r requirements.txt``
@@ -23,7 +25,3 @@
 ## Experiment Analysis
 
 - After running a couple of Experiments successfully running the [experiments_analytics.ipynb](experiments_analytics.ipynb) will help create charts that will help analyse different parameters of the Experiment. 
-
-## Some Ideas 
-
-- Time Measurement decorator to measure start and endtime of the Steps
