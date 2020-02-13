@@ -102,7 +102,7 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         # $ Collect and create the flattenned dataset according to the number of examples.
         self.train_flattened,self.val_flattened,self.test_flattened = read_mnist(np,self.mnist_dataset_train_x_raw,self.mnist_dataset_train_y_raw,self.mnist_dataset_test_x_raw,self.mnist_dataset_test_y_raw,flatten=True,num_train=self.num_training_examples)
         
-        # $ Train models in parallel withe the 
+        # $ Train models in parallel with Sequential, Convolutional and Conv Batch Norm Neural Nets.
         self.next(self.train_sequential,self.train_convolution,self.train_convolution_batch_norm)
 
     @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
