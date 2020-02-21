@@ -1,4 +1,4 @@
-from metaflow import FlowSpec, step, Parameter, conda, conda_base, IncludeFile
+from metaflow import FlowSpec, step, Parameter, IncludeFile, batch, retry
 import struct
 
 
@@ -58,7 +58,6 @@ def get_python_version():
 
 
 # Use the specified version of python for this flow.
-@conda_base(python=get_python_version())
 class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
     """
     Train multiple Iterations of Machine learning models for MNIST Handwritten digit prediction.
@@ -82,13 +81,13 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
                              help="The path to a mnist test labels file.",
                              default=script_path('data/mnist/t10k-labels-idx1-ubyte'),is_text=False,encoding='UTF-8')
 
-    num_training_examples = Parameter('num_training_examples',help='Number of Training Examples',default=55000)
+    num_training_examples = Parameter('num_training_examples',help='Number of Training Examples',default=5000)
 
     number_of_epochs = Parameter('number_of_epochs',help='Number of Epochs to Run for the Training Process',default=10)
 
     batch_size = Parameter('batch_size',help='Batch Sizes for the Training Process',default=128)
 
-    @conda(libraries={'numpy':'1.18.1'})
+    
     @step
     def start(self):
         """
@@ -105,7 +104,7 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         # $ Train models in parallel withe the 
         self.next(self.train_sequential,self.train_convolution,self.train_convolution_batch_norm)
 
-    @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
+    
     @step
     def train_sequential(self):
         """
@@ -127,8 +126,6 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         self.history = history.history
         self.next(self.join)
 
-        
-    @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
     @step
     def train_convolution(self):
         """
@@ -156,7 +153,8 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         self.history = history.history
         self.next(self.join)
 
-    @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
+    
+    
     @step
     def train_convolution_batch_norm(self):
         """
@@ -198,8 +196,8 @@ class MNISTNeuralNetworkExperimentationFlow(FlowSpec):
         self.history = history.history
         self.next(self.join)
 
- 
-    @conda(libraries={'numpy':'1.18.1','tensorflow':'1.4.0'})
+    
+    
     @step
     def join(self,inputs):
         """
